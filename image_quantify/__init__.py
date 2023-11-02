@@ -13,6 +13,7 @@ class Defaults:
     QUALITY_CONTROL = "quality_control"
     IMGS_CORR = "images_corrected"
     PLOT_FIGURES = "figures"
+    RAW = "RAW_IMAGES"
     PATH = pathlib.Path.cwd().parent
 
     MODEL_DICT = {

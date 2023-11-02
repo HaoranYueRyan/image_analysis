@@ -6,6 +6,7 @@
 import pandas as pd
 import pathlib
 from image_quantify import Defaults, SEPARATOR
+import os
 class ExpPaths:
     def __init__(self):
         self._create_dir_paths()
@@ -19,14 +20,15 @@ class ExpPaths:
         self.quality_ctr = self.path / Defaults.QUALITY_CONTROL
         self.example_img = self.path / Defaults.IMGS_CORR
         self.figures = self.path / Defaults.PLOT_FIGURES
-
+        self.raw = self.path / Defaults.RAW
     def _create_exp_dir(self):
-        path_list = [self.path,  self.final_data,self.Mask,
-                     self.quality_ctr, self.example_img, self.figures]
+        path_list = [self.path, self.final_data, self.Mask,
+        self.quality_ctr, self.example_img, self.figures, self.raw]
         for path in path_list:
-            path.mkdir(exist_ok=True)
+            if not os.path.exists(path):
+                os.makedirs(path, exist_ok=True)
 
-        print(f'Gathering data and assembling directories for experiment \n{SEPARATOR}')
+    print(f'Gathering data and assembling directories for experiment\n{SEPARATOR}')
 
 
 if __name__=='__main__':

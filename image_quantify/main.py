@@ -3,7 +3,7 @@ from image_quantify import Defaults
 import numpy as np
 from image_quantify.image_analysis import Image,ImageProperties
 from image_quantify.data_structure import ExpPaths
-
+from image_quantify.flatfield_corr import aggregate_imgs
 
 def main(image_path):
     exp_paths=ExpPaths()
@@ -13,7 +13,10 @@ def main(image_path):
     # for count, well in enumerate(list(meta_data.plate_obj.listChildren())):
     for channel_num in range(ori_img.shape[0]):
         image_dict[Defaults.CHANNEL_NAME[int(channel_num)]]=np.array(ori_img[channel_num,:,:])
-    img=Image(image_dict,exp_paths)
+
+    flat_filed_mask=aggregate_imgs(image_dict)
+
+    img=Image(image_dict,exp_paths,flat_filed_mask)
     img.segmentation_figure()
     image_data=ImageProperties(img)
     df_final=image_data.image_df

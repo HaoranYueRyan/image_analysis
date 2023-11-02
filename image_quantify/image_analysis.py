@@ -8,7 +8,8 @@ import numpy as np
 import pandas as pd
 from cellpose import models
 from skimage import measure, io
-from image_quantify.image_corr import scaled,color_label,save_fig
+from image_quantify.image_corr import scaled,color_label
+from image_quantify.general_functions import save_fig
 import numpy as np
 import skimage.io
 import matplotlib.pyplot as plt
@@ -21,10 +22,10 @@ class Image:
     Stores corrected images as dict, and n_mask, c_mask, and cyto_mask arrays.
     """
 
-    def __init__(self, img_dict, exp_paths):
+    def __init__(self, img_dict, exp_paths,flat_filed_mask):
         self.img_dict = img_dict
         self._paths = exp_paths
-
+        self.flat_filed_mask=flat_filed_mask
         self.masks = {}
         for channel in ['DAPI', 'CD8', 'CD66b', 'CD68', 'CD16']:
             mask_path = os.path.join(self._paths.Mask, f'segmented_mask_{channel}.tif')
@@ -58,15 +59,15 @@ class Image:
             fig_path = os.path.join(self._paths.quality_ctr, f'{channel}_quality_segmentation_check.pdf')
 
             if not os.path.exists(mask_path):
-                img_scaled = scaled(self.img_dict[channel])
-                skimage.io.imsave(mask_path, img_scaled)
+                corr_img = scaled(self.img_dict[channel]/self.flat_filed_mask)
+                skimage.io.imsave(mask_path, corr_img)
 
             if os.path.exists(fig_path):  # If the figure already exists, don't create it again
                 continue
 
             # Only for the current channel
             original_img = self.img_dict[channel]
-            color_labels = color_label(self.masks[channel], img_scaled)
+            color_labels = color_label(self.masks[channel], corr_img)
 
             fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(15, 7))
 
